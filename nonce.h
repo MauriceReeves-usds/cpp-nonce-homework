@@ -5,6 +5,8 @@
 #ifndef CPP_NONCE_HOMEWORK_NONCE_H
 #define CPP_NONCE_HOMEWORK_NONCE_H
 
+#include <sstream>
+
 #define         MAX_NONCE_SIZE              39
 #define         MAX_DATE_SIZE               25
 #define         MAX_TIME_SIZE               25
@@ -27,7 +29,16 @@ struct Record {
     char date[MAX_DATE_SIZE]{};
     char time[MAX_TIME_SIZE]{};
     int count;
-    Record* next{};
+
+    // return a string representation of the record
+    [[nodiscard("Why discard the string result?")]] std::string to_string() const {
+        std::ostringstream s;
+        s << "Nonce -> " << this->nonce
+          << " Date -> " << this->date
+          << " Time -> " << this->time
+          << " Count -> " << this->count;
+        return s.str();
+    }
 };
 
 #endif //CPP_NONCE_HOMEWORK_NONCE_H

@@ -3,7 +3,6 @@
 //
 
 #include <iostream>
-#include <sstream>
 #include <vector>
 #include "nonce.h"
 
@@ -12,20 +11,8 @@ std::vector<Record> duplicates {};
 // our lambda to count duplicates
 auto find_dupes = [](const Record r) { return r.count > 1; };
 
-// output to a string
-std::string record_to_string(const Record* r) {
-    std::ostringstream s;
-    s << "Nonce -> " << r->nonce
-        << " Date -> " << r->date
-        << " Time -> " << r->time
-        << " Count -> " << r->count;
-    return s.str();
-}
-
-void print_record(const Record* r) {
-    assert(r != nullptr);
-    std::string string_repr = record_to_string(r);
-    std::cout << string_repr << std::endl;
+void print_record(Record& r) {
+    std::cout << r.to_string() << std::endl;
 }
 
 std::__wrap_iter<Record *> find_record(const char* nonce) {
@@ -40,9 +27,8 @@ void find_duplicates() {
 }
 
 void create_record_list(const char* file_path) {
-    FILE * file_pointer;
     char nonce[MAX_NONCE_SIZE], date[MAX_DATE_SIZE], time[MAX_TIME_SIZE];
-    file_pointer = fopen(file_path, "r");
+    auto file_pointer = fopen(file_path, "r");
     while (fscanf(file_pointer, "%36s %10s %15s[\n]", nonce, date, time) != EOF) {
         // while reading the file, look for any matching nonce already in the file
         auto record = find_record(nonce);
@@ -59,7 +45,7 @@ int main() {
     create_record_list("/Users/maurice/development/cpp-nonce-homework/resources/nonce.txt");
 
     for (auto record : records) {
-        print_record(&record);
+        print_record(record);
     }
 
     // get the count of duplicates
@@ -68,7 +54,7 @@ int main() {
     if (duplicates_count > 0) {
         find_duplicates();
         for (auto duplicate : duplicates) {
-            print_record(&duplicate);
+            print_record(duplicate);
         }
     } else {
         std::cout << "No duplicates detected!" << std::endl;
